@@ -353,7 +353,8 @@ function testSystem(data) {
 //-----------------------------------------------------------------------
 
 function start() {
-	OParl.open('https://www.lwl-pch.sitzung-online.de/oi/oparl/1.0/system.asp', function (err, data) {
+	OParl.open('http://cbdev1.werkstall.de/opt/senator/export/system.json', function (err, data) {
+	//OParl.open('https://www.lwl-pch.sitzung-online.de/oi/oparl/1.0/system.asp', function (err, data) {
 //	OParl.open('https://dev.oparl.org/api/v1/system/', function (err, data) {
 		if (err !== null) {
 			error('Something went wrong: ' + err);
