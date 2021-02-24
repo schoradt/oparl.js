@@ -240,93 +240,29 @@ function testBody(data) {
 	console.log('Body license: ' + data.license);
 	console.log('Body modified: ' + isNaN(data.modified) ? '' : data.modified.toJSON().substr(0, 10));
 
-	data.systemObject.get(function (err, dataSystem) {
-		if (err !== null) {
-			console.error('Something went wrong: ' + err);
-		} else {
-			console.log('System name: ' + dataSystem.name);
+    data.system.get().then(data => {
+        console.log('System name: ' + data.name);
+    });
 
-			data.organizationList.get(function (err, dataOrganizationList) {
-				if (err !== null) {
-					console.error('Something went wrong: ' + err);
-				} else {
-					console.log('Organization count: ' + dataOrganizationList.length);
+    data.organization.get().then(list => {
+        console.log('Organization count: ' + list.length);
+    });
 
-					data.personList.get(function (err, dataPersonList) {
-						if (err !== null) {
-							console.error('Something went wrong: ' + err);
-						} else {
-							console.log('Person count: ' + dataPersonList.length);
+    data.person.get().then(list => {
+        console.log('Person count: ' + list.length);
+    });
 
-							data.meetingList.get(function (err, dataMeetingList) {
-								if (err !== null) {
-									console.error('Something went wrong: ' + err);
-								} else {
-									console.log('Meeting count: ' + dataMeetingList.length);
+    data.meeting.get().then(list => {
+        console.log('Meeting count: ' + list.length);
+    });
 
-									data.paperList.get(function (err, dataPaperList) {
-										if (err !== null) {
-											console.error('Something went wrong: ' + err);
-										} else {
-											console.log('Paper count: ' + dataPaperList.length);
+    data.paper.get().then(list => {
+        console.log('Paper count: ' + list.length);
+    });
 
-											data.legislativeTermList.get(function (err, dataLegislativeTermList) {
-												if (err !== null) {
-													console.error('Something went wrong: ' + err);
-												} else {
-													console.log('Legislative count: ' + dataLegislativeTermList.length);
-/*													if (dataLegislativeTermList.length > 0) {
-														dataLegislativeTermList[0].get(function (err, dataLegislativeTerm) {
-															if (err !== null) {
-																console.error('Something went wrong: ' + err);
-															} else {
-																testLegislative(dataLegislativeTerm, function () {
-																	if (dataOrganizationList.length > 0) {
-																		dataOrganizationList[0].get(function (err, dataOrganization) {
-																			if (err !== null) {
-																				console.error('Something went wrong: ' + err);
-																			} else {
-																				testOrganization(dataOrganization);
-																			}
-																		});
-																	}
-																});
-															}
-														});
-													} else {
-														var orga = 6;
-														if (dataOrganizationList.length > orga) {
-															dataOrganizationList[orga].get(function (err, dataOrganization) {
-																if (err !== null) {
-																	console.error('Something went wrong: ' + err);
-																} else {
-																	testOrganization(dataOrganization);
-																}
-															});
-														}
-													}*/
-
-													if (dataMeetingList.length > 0) {
-														dataMeetingList[0].get(function (err, dataMeeting) {
-															if (err !== null) {
-																console.error('Something went wrong: ' + err);
-															} else {
-																testMeeting(dataMeeting);
-															}
-														});
-													}
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-				}
-			});
-		}
-	});
+    data.legislativeTerm.get().then(list => {
+        console.log('Legislative count: ' + list.length);
+    });
 }
 
 //-----------------------------------------------------------------------
@@ -338,22 +274,13 @@ function testSystem(data) {
 	console.log('System name: ' + data.name);
 	console.log('System license: ' + data.license);
 
-	data.bodyList.get(function (err, dataBodyList) {
-		if (err !== null) {
-			console.error('Something went wrong: ' + err);
-		} else {
-			console.log('Body count: ' + dataBodyList.length);
-			if (dataBodyList.length > 0) {
-				dataBodyList[0].get(function (err, object) {
-					if (err !== null) {
-						console.error('Something went wrong: ' + err);
-					} else {
-						testBody(object);
-					}
-				});
-			}
+	data.body.get().then(dataBodyList => {
+        console.log('Body count: ' + dataBodyList.length);
+
+		if (dataBodyList.length > 0) {
+			dataBodyList[0].get().then(testBody);
 		}
-	});
+    });
 }
 
 //-----------------------------------------------------------------------
@@ -365,13 +292,20 @@ function start() {
 //	OParl.open('https://www.lwl-pch.sitzung-online.de/oi/oparl/1.0/system.asp', function (err, data) {
 //	OParl.open('https://api.kleineanfragen.de/oparl/v1', function (err, data) {
 //	OParl.open('https://www.muenchen-transparent.de/oparl/v1.0', function (err, data) {
-	OParl.open('https://dev.oparl.org/api/v1/system/', function (err, data) {
-		if (err !== null) {
-			console.error('Something went wrong: ' + err);
-		} else {
-			testSystem(data);
-		}
-	});
+//	OParl.open('https://dev.oparl.org/api/v1/system/', function (err, data) {
+
+    var myArgs = process.argv.slice(2);
+    console.log('myArgs: ', myArgs);
+
+    var testUrl = "https://api.kleineanfragen.de/oparl/v1";
+
+    if (myArgs.length > 0) {
+        testUrl = myArgs[0];
+    }
+
+    OParl.open(testUrl).then(testSystem).catch(err => {
+        console.error('Something went wrong: ' + err);
+    });
 }
 
 //-----------------------------------------------------------------------
