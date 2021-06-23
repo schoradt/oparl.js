@@ -25,11 +25,21 @@ function test() {
                 Validator.validateSystem(data).then(function(val) {
                     console.log("Validation results: ");
 
+                    var res = true;
+
                     Validator.result.forEach(element => {
                         console.log("    " + element);
+
+                        if (element.match(/ERROR/)) {
+                            res = false;
+                        }
                     });
 
-                    resolve(true);
+                    resolve(res);
+                }).catch(err => {
+                    console.error('Something went wrong: ' + err);
+    
+                    resolve(false);
                 });
             })
             .catch(err => {
