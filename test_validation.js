@@ -26,14 +26,18 @@ function test() {
                     console.log("Validation results: ");
 
                     var res = true;
+                    var errors = 0;
 
                     Validator.result.forEach(element => {
                         console.log("    " + element);
 
                         if (element.match(/ERROR/)) {
                             res = false;
+                            errors++;
                         }
                     });
+
+                    console.log("found ", errors, " errors");                
 
                     resolve(res);
                 }).catch(err => {
