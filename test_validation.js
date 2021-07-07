@@ -37,17 +37,50 @@ function test() {
                         }
                     });
 
-                    console.log("found ", errors, " errors");                
+                    console.log("found ", errors, " errors");
 
                     resolve(res);
                 }).catch(err => {
                     console.error('Something went wrong: ' + err);
     
+                    var res = true;
+                    var errors = 0;
+                    var warning = 0;
+
+                    Validator.result.forEach(element => {
+                        console.log("    " + element);
+
+                        if (element.match(/ERROR/)) {
+                            res = false;
+                            errors++;
+                        }
+
+                        if (element.match(/Warning/)) {
+                            warning++;
+                        }
+                    });
+
+                    console.log("found ", errors, " errors and " + warning + " warnings");
+
                     resolve(false);
                 });
             })
             .catch(err => {
                 console.error('Something went wrong: ' + err);
+
+                var res = true;
+                var errors = 0;
+
+                Validator.result.forEach(element => {
+                    console.log("    " + element);
+
+                    if (element.match(/ERROR/)) {
+                        res = false;
+                        errors++;
+                    }
+                });
+
+                console.log("found ", errors, " errors");
 
                 resolve(false);
             });
